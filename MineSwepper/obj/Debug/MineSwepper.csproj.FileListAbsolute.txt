@@ -1,0 +1,10 @@
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\bin\Debug\MineSwepper.exe.config
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\bin\Debug\MineSwepper.exe
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\bin\Debug\MineSwepper.pdb
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.csproj.AssemblyReference.cache
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.Form1.resources
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.Properties.Resources.resources
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.csproj.GenerateResource.cache
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.csproj.CoreCompileInputs.cache
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.exe
+C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.pdb
