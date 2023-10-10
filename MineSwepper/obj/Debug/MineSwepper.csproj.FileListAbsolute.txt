@@ -8,3 +8,14 @@ C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.cs
 C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.csproj.CoreCompileInputs.cache
 C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.exe
 C:\Users\Ucenik\Documents\Milan\MineSwepper\MineSwepper\obj\Debug\MineSwepper.pdb
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\bin\Debug\MineSwepper.exe.config
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\bin\Debug\MineSwepper.exe
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\bin\Debug\MineSwepper.pdb
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.csproj.AssemblyReference.cache
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.csproj.SuggestedBindingRedirects.cache
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.Properties.Resources.resources
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.csproj.GenerateResource.cache
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.csproj.CoreCompileInputs.cache
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.exe
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.pdb
+C:\Users\balca\Documents\Programiranje\C\MineSweeper\MineSwepper\obj\Debug\MineSwepper.MineSweeper.resources
