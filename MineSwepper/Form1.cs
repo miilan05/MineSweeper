@@ -19,10 +19,9 @@ namespace MineSwepper
             int boardHeight = 10;
             int cubeWidth = 50;
             int cubeHeight = 50;
-            
+
             this.Size = new Size(boardWidth * cubeWidth + 17, boardHeight * cubeHeight + 40);
             Buttons = new Button[boardWidth, boardHeight];
-
             createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
             HashSet<Position> minePositions = generateRandomPositions(boardWidth, boardHeight, 10);
             minePositions.ToList().ForEach(position => Buttons[position.y, position.x].Tag = "-1");
@@ -37,7 +36,7 @@ namespace MineSwepper
                         Size = new Size(cubeWidth, cubeHeight),
                         BackColor = Color.Coral,
                         Location = new Point(i * cubeWidth, j * cubeHeight),
-                        FlatStyle = FlatStyle.Flat,
+                        FlatStyle = FlatStyle.Standard,
                         Font = new Font("Arial", 24),
                         Tag = "0"
                     };
@@ -94,12 +93,29 @@ namespace MineSwepper
         {
             Button btn = (sender as Button);
             string tag = btn.Tag as string;
+            if (btn.Text != "" && btn.Tag as string != "-1") return;
             showColor(btn);
             if (tag == "0") revealAllZeros(Convert.ToInt16(btn.Name.Split('_')[0]), Convert.ToInt16(btn.Name.Split('_')[1]), new HashSet<Position>());
-            btn.Text = (e.Button == MouseButtons.Right) ? "🚩" : tag == "-1" ? "💣" : tag;
-            if (tag == "-1" && e.Button == MouseButtons.Left) { revealAll(); MessageBox.Show("You lost :( "); };
+            else if (tag == "-1" && e.Button == MouseButtons.Left)
+            {
+                revealAll();
+                MessageBox.Show("You lost :( ");
+                return;
+            }
+            else btn.Text = (e.Button == MouseButtons.Right) ? "🚩" : tag == "-1" ? "💣" : tag;
             label1.Focus();
+            if (checkForWin()) MessageBox.Show("You won!");
         }
+
+        static bool checkForWin()
+        {
+            foreach (Button btn in Buttons)
+            {
+                if (btn.Text == "" || (btn.Text == "🚩" && btn.Tag as string != "-1")) return false;
+            }
+            return true;
+        }
+
         static void showColor(Button btn)
         {
             string tag = btn.Tag as string;
@@ -115,16 +131,22 @@ namespace MineSwepper
                     int newX = x + j;
                     int newY = y + i;
                     if ((i == 0 && j == 0) || newY < 0 || newX < 0 || newY > Buttons.GetLength(0) - 1 || newX > Buttons.GetLength(1) - 1) continue;
-                    string btnTag = Buttons[newY, newX].Tag as string;
-                    showColor(Buttons[newY, newX]);
-                    Buttons[newY, newX].Text = btnTag;
-                    if (btnTag == "0")
+                    if (!checkedSet.Contains(new Position(newX, newY)))
                     {
-                        if (checkedSet.Add(new Position(newX, newY))) revealAllZeros(newX, newY, checkedSet);
+                        string btnTag = Buttons[newY, newX].Tag as string;
+                        showColor(Buttons[newY, newX]);
+                        Buttons[newY, newX].Text = btnTag;
+                        if (btnTag != "0")
+                        {
+                            checkedSet.Add(new Position(newX, newY));
+                        }
+                        else
+                        {
+                            if (checkedSet.Add(new Position(newX, newY))) revealAllZeros(newX, newY, checkedSet);
+                        }
                     }
                 }
             }
-
         }
 
         static void revealAll()
