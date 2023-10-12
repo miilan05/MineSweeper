@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace MineSwepper
@@ -13,34 +15,36 @@ namespace MineSwepper
             InitializeComponent();
         }
         static Button[,] Buttons;
+        static int boardWidth = 10;
+        static int boardHeight = 10;
+        static int mineCount = 10;
+        static int cubeWidth = 25;
+        static int cubeHeight = 25;
+        static int counter = 0;
         private void Form1_Load(object sender, EventArgs e)
         {
-            int boardWidth = 10;
-            int boardHeight = 10;
-            int cubeWidth = 50;
-            int cubeHeight = 50;
-
-            this.Size = new Size(boardWidth * cubeWidth + 17, boardHeight * cubeHeight + 40);
-            Buttons = new Button[boardWidth, boardHeight];
             createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
-            HashSet<Position> minePositions = generateRandomPositions(boardWidth, boardHeight, 10);
+            HashSet<Position> minePositions = generateRandomPositions(boardWidth, boardHeight, mineCount);
             minePositions.ToList().ForEach(position => Buttons[position.y, position.x].Tag = "-1");
             assignTags();
+            resizeElements();
         }
-        void createBoard(int boardWidth, int boardHeight, int cubeWidth, int cubeHeight) 
+        void createBoard(int boardWidth, int boardHeight, int cubeWidth, int cubeHeight)
         {
+            Buttons = new Button[boardWidth, boardHeight];
             for (int i = 0; i < boardWidth; i++) {
                 for (int j = 0; j < boardHeight; j++) {
                     Button button = new Button {
                         Name = $"{j}_{i}",
                         Size = new Size(cubeWidth, cubeHeight),
-                        BackColor = Color.Coral,
-                        Location = new Point(i * cubeWidth, j * cubeHeight),
+                        Location = new Point(i * cubeWidth, j * cubeHeight + 84),
+                        BackColor = Color.LightGray,
                         FlatStyle = FlatStyle.Standard,
-                        Font = new Font("Arial", 24),
-                        Tag = "0"
+                        Tag = "0",
+                        Font = new Font("Arial", 12, FontStyle.Bold),
+                        Margin = new Padding(0, 0, 0, 0),
                     };
-
+                    button.FlatAppearance.BorderColor = Color.DimGray;
                     button.MouseDown += btnClick;
                     Buttons[i, j] = button;
                     this.Controls.Add(button);
@@ -48,6 +52,13 @@ namespace MineSwepper
             }
         }
 
+        void resizeElements() {
+            this.Size = new Size(boardWidth * cubeWidth + 17, boardHeight * cubeHeight + 124);
+            label2.Location = new Point(10, 34);
+            button2.Location = new Point(boardWidth * cubeWidth / 2 - button2.Width / 2, 34);
+            label3.Location = new Point(boardWidth * cubeWidth - 10 - label3.Width, 34);
+            label2.Text = mineCount.ToString("D" + 3);
+        }
         static HashSet<Position> generateRandomPositions(int maxX, int maxY, int n) 
         {
             HashSet<Position> positions = new HashSet<Position>();
@@ -68,8 +79,7 @@ namespace MineSwepper
             {
                 for (int j = 0; j < numCols; j++)
                 {
-                    if (Buttons[i, j].Tag as string == "-1") continue;
-                    Buttons[i, j].Tag = getNeighboringBombsCount(j, i, "-1").ToString();
+                    if (Buttons[i, j].Tag as string != "-1") Buttons[i, j].Tag = getNeighboringBombsCount(j, i, "-1").ToString();
                 }
             }
         }
@@ -93,33 +103,31 @@ namespace MineSwepper
         {
             Button btn = (sender as Button);
             string tag = btn.Tag as string;
-            if (btn.Text != "" && btn.Tag as string != "-1") return;
-            showColor(btn);
-            if (tag == "0") revealAllZeros(Convert.ToInt16(btn.Name.Split('_')[0]), Convert.ToInt16(btn.Name.Split('_')[1]), new HashSet<Position>());
+            if (btn.Text != "" && (btn.Text != "🚩")) return;
+            if (tag == "0" && e.Button == MouseButtons.Left) revealAllZeros(Convert.ToInt16(btn.Name.Split('_')[0]), Convert.ToInt16(btn.Name.Split('_')[1]), new HashSet<Position>());
             else if (tag == "-1" && e.Button == MouseButtons.Left)
             {
                 revealAll();
+                timer1.Stop();
                 MessageBox.Show("You lost :( ");
                 return;
             }
             else btn.Text = (e.Button == MouseButtons.Right) ? "🚩" : tag == "-1" ? "💣" : tag;
+            if (e.Button == MouseButtons.Left) btn.FlatStyle = FlatStyle.Flat;
+            showColor(btn);
             label1.Focus();
-            if (checkForWin()) MessageBox.Show("You won!");
+            if (checkForWin()) { timer1.Stop(); MessageBox.Show("You won!");  }
         }
 
         static bool checkForWin()
         {
-            foreach (Button btn in Buttons)
-            {
-                if (btn.Text == "" || (btn.Text == "🚩" && btn.Tag as string != "-1")) return false;
-            }
-            return true;
+            return !Buttons.Cast<Button>().ToList().Any(btn => (btn.Text == "" && btn.Tag as string != "-") || (btn.Text == "🚩" && btn.Tag as string != "-1"));
         }
 
         static void showColor(Button btn)
         {
             string tag = btn.Tag as string;
-            btn.ForeColor = tag == "-1" ? Color.Black : tag == "0" ? Color.Black : tag == "1" ? Color.Blue : tag == "2" ? Color.Green : Color.DarkRed;
+            btn.ForeColor = (tag == "-1" || btn.Text == "🚩") ? Color.Black : tag == "0" ? Color.Black : tag == "1" ? Color.Blue : tag == "2" ? Color.Green : Color.DarkRed;
         }
 
         static void revealAllZeros(int x, int y, HashSet<Position> checkedSet)
@@ -128,21 +136,32 @@ namespace MineSwepper
             {
                 for (int j = -1; j <= 1; j++)
                 {
+                    if (i == 0 && j == 0) continue;
+
                     int newX = x + j;
                     int newY = y + i;
-                    if ((i == 0 && j == 0) || newY < 0 || newX < 0 || newY > Buttons.GetLength(0) - 1 || newX > Buttons.GetLength(1) - 1) continue;
-                    if (!checkedSet.Contains(new Position(newX, newY)))
+
+                    if (newX < 0 || newY < 0 || newX >= Buttons.GetLength(1) || newY >= Buttons.GetLength(0))
+                        continue;
+
+                    Position newPosition = new Position(newX, newY);
+
+                    if (!checkedSet.Contains(newPosition))
                     {
-                        string btnTag = Buttons[newY, newX].Tag as string;
-                        showColor(Buttons[newY, newX]);
-                        Buttons[newY, newX].Text = btnTag;
-                        if (btnTag != "0")
+                        Button button = Buttons[newY, newX];
+                        string btnTag = button.Tag as string;
+
+                        showColor(button);
+                        button.Text = btnTag;
+                        button.FlatStyle = FlatStyle.Flat;
+
+                        checkedSet.Add(newPosition);
+
+                        if (btnTag == "0")
                         {
-                            checkedSet.Add(new Position(newX, newY));
-                        }
-                        else
-                        {
-                            if (checkedSet.Add(new Position(newX, newY))) revealAllZeros(newX, newY, checkedSet);
+                            button.Text = "";
+                            button.Tag = "-";
+                            revealAllZeros(newX, newY, checkedSet);
                         }
                     }
                 }
@@ -151,7 +170,15 @@ namespace MineSwepper
 
         static void revealAll()
         {
-            foreach (Button btn in Buttons) btn.Text = btn.Tag as string == "-1" ? "💣" : btn.Tag as string;
+            foreach (Button btn in Buttons)
+            {
+                if (btn.Tag as string == "-1")
+                {
+                    btn.FlatStyle = FlatStyle.Flat;
+                    btn.Text = "💣";
+                    btn.ForeColor = Color.Black;
+                }
+            }
         }
 
         public class Position {
@@ -175,6 +202,76 @@ namespace MineSwepper
                     return hash;
                 }
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            restart();
+        }
+        void restart()
+        {
+            foreach (Button btn in Buttons)
+            {
+                btn.BackColor = Color.LightGray;
+                btn.FlatStyle = FlatStyle.Standard;
+                btn.Tag = "0";
+                btn.Text = "";
+            }
+            HashSet<Position> minePositions = generateRandomPositions(boardWidth, boardHeight, mineCount);
+            minePositions.ToList().ForEach(position => Buttons[position.y, position.x].Tag = "-1");
+            assignTags();
+            label3.Text = "000";
+            counter = 0;
+            timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            counter++;
+            label3.Text = counter.ToString("D" + 3);
+        }
+
+        void removeAll()
+        {
+            foreach (Button btn in Buttons) Controls.Remove(btn);
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            restart();
+        }
+
+        private void begginnerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            boardHeight = 8;
+            boardWidth = 8;
+            mineCount = 8;
+            removeAll();
+            createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
+            resizeElements();
+            restart();
+        }
+
+        private void intermediateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            boardHeight = 14;
+            boardWidth = 14;
+            mineCount = 20;
+            removeAll();
+            createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
+            resizeElements();
+            restart();
+        }
+
+        private void expertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            boardHeight = 30;
+            boardWidth = 30;
+            mineCount = 99;
+            removeAll();
+            createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
+            resizeElements();
+            restart();
         }
     }
 }
