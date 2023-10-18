@@ -29,3 +29,4 @@ C:\Users\Ucenik\Documents\Milan\MineSweeper\MineSwepper\obj\Debug\MineSwepper.cs
 C:\Users\Ucenik\Documents\Milan\MineSweeper\MineSwepper\obj\Debug\MineSwepper.csproj.CoreCompileInputs.cache
 C:\Users\Ucenik\Documents\Milan\MineSweeper\MineSwepper\obj\Debug\MineSwepper.exe
 C:\Users\Ucenik\Documents\Milan\MineSweeper\MineSwepper\obj\Debug\MineSwepper.pdb
+C:\Users\Ucenik\Documents\Milan\MineSweeper\MineSwepper\obj\Debug\MineSwepper.Form2.resources

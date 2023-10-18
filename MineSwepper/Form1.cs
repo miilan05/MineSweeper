@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection.Emit;
@@ -18,8 +19,8 @@ namespace MineSwepper
         static int boardWidth = 10;
         static int boardHeight = 10;
         static int mineCount = 10;
-        static int cubeWidth = 25;
-        static int cubeHeight = 25;
+        static int cubeWidth = 30;
+        static int cubeHeight = 30;
         static int counter = 0;
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -103,7 +104,7 @@ namespace MineSwepper
         {
             Button btn = (sender as Button);
             string tag = btn.Tag as string;
-            if (btn.Text != "" && (btn.Text != "🚩")) return;
+            if ((btn.Text != "" && (btn.Text != "🚩")) || tag == "-") return;
             if (tag == "0" && e.Button == MouseButtons.Left) revealAllZeros(Convert.ToInt16(btn.Name.Split('_')[0]), Convert.ToInt16(btn.Name.Split('_')[1]), new HashSet<Position>());
             else if (tag == "-1" && e.Button == MouseButtons.Left)
             {
@@ -116,12 +117,19 @@ namespace MineSwepper
             if (e.Button == MouseButtons.Left) btn.FlatStyle = FlatStyle.Flat;
             showColor(btn);
             label1.Focus();
+            label2.Text = countRemainingFlags().ToString();
             if (checkForWin()) { timer1.Stop(); MessageBox.Show("You won!");  }
         }
 
         static bool checkForWin()
         {
             return !Buttons.Cast<Button>().ToList().Any(btn => (btn.Text == "" && btn.Tag as string != "-") || (btn.Text == "🚩" && btn.Tag as string != "-1"));
+        }
+
+        static int countRemainingFlags()
+        {
+            return mineCount - Buttons.Cast<Button>().ToList().Count(btn => (btn.Text == "🚩"));
+
         }
 
         static void showColor(Button btn)
@@ -141,29 +149,26 @@ namespace MineSwepper
                     int newX = x + j;
                     int newY = y + i;
 
-                    if (newX < 0 || newY < 0 || newX >= Buttons.GetLength(1) || newY >= Buttons.GetLength(0))
-                        continue;
+                    if (newX < 0 || newY < 0 || newX >= Buttons.GetLength(1) || newY >= Buttons.GetLength(0)) continue;
 
                     Position newPosition = new Position(newX, newY);
 
-                    if (!checkedSet.Contains(newPosition))
-                    {
-                        Button button = Buttons[newY, newX];
-                        string btnTag = button.Tag as string;
+                    if (checkedSet.Contains(newPosition)) continue;
 
-                        showColor(button);
-                        button.Text = btnTag;
-                        button.FlatStyle = FlatStyle.Flat;
+                    Button button = Buttons[newY, newX];
+                    string btnTag = button.Tag as string;
 
-                        checkedSet.Add(newPosition);
+                    showColor(button);
+                    button.Text = btnTag;
+                    button.FlatStyle = FlatStyle.Flat;
 
-                        if (btnTag == "0")
-                        {
-                            button.Text = "";
-                            button.Tag = "-";
-                            revealAllZeros(newX, newY, checkedSet);
-                        }
-                    }
+                    checkedSet.Add(newPosition);
+
+                    if (btnTag != "0") continue;
+                        
+                    button.Text = "";
+                    button.Tag = "-";
+                    revealAllZeros(newX, newY, checkedSet);
                 }
             }
         }
@@ -268,6 +273,25 @@ namespace MineSwepper
             boardHeight = 30;
             boardWidth = 30;
             mineCount = 99;
+            removeAll();
+            createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
+            resizeElements();
+            restart();
+        }
+
+        private void customToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.FormClosing += Form2_FormClosing;
+            form2.Show();
+        }
+        private void Form2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Form2 form2 = (Form2)sender;
+            if (form2.cancel) return;
+            boardHeight = form2.height;
+            boardWidth = form2.width;
+            mineCount = form2.mines;
             removeAll();
             createBoard(boardWidth, boardHeight, cubeWidth, cubeHeight);
             resizeElements();

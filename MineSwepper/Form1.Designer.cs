@@ -61,7 +61,7 @@
             this.button2.BackColor = System.Drawing.Color.Black;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.Silver;
-            this.button2.Location = new System.Drawing.Point(73, 33);
+            this.button2.Location = new System.Drawing.Point(88, 33);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(56, 40);
             this.button2.TabIndex = 3;
@@ -72,12 +72,12 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Black;
-            this.label2.Font = new System.Drawing.Font("Digital-7 Mono", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Red;
             this.label2.Location = new System.Drawing.Point(9, 34);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 38);
+            this.label2.Size = new System.Drawing.Size(74, 38);
             this.label2.TabIndex = 5;
             this.label2.Text = "000";
             this.label2.UseCompatibleTextRendering = true;
@@ -85,11 +85,11 @@
             // label3
             // 
             this.label3.BackColor = System.Drawing.Color.Black;
-            this.label3.Font = new System.Drawing.Font("Digital-7 Mono", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Red;
-            this.label3.Location = new System.Drawing.Point(135, 35);
+            this.label3.Location = new System.Drawing.Point(149, 35);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 37);
+            this.label3.Size = new System.Drawing.Size(74, 37);
             this.label3.TabIndex = 6;
             this.label3.Text = "000";
             this.label3.UseCompatibleTextRendering = true;
@@ -164,6 +164,7 @@
             this.customToolStripMenuItem.Name = "customToolStripMenuItem";
             this.customToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customToolStripMenuItem.Text = "Custom";
+            this.customToolStripMenuItem.Click += new System.EventHandler(this.customToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
